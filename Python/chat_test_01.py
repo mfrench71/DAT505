@@ -1,5 +1,7 @@
 import random
 import time
+import wikipedia
+from unidecode import unidecode
 
 firstConversation = True
 secondConversation = True
@@ -52,9 +54,10 @@ link_pairs = (greetings, greetings), (questions, responses), (confirmations, val
 
 divider = "****************************************************"
 
-# Get the current hour
+# Get the current hour and year
 
 current_hour = time.strptime(time.ctime(time.time())).tm_hour
+current_year = time.strptime(time.ctime(time.time())).tm_year
 
 # Set age for PC
 
@@ -114,7 +117,7 @@ if pcName == result.capitalize():
 
 print(divider)
 
-print("Tell me something about yourself")
+print("Tell me something interesting about yourself")
 
 query = raw_input()
 stripWords(query)
@@ -127,10 +130,36 @@ if result:
     print(result)
 else:
     print("Not much")
-    
+
 print(divider)
+
+print("Here's what I found out about " + query + " ... ")
+
+# Use Unidecode to allow Windows to display unsupported characters
+# Limit to returning one sentence
+
+print unidecode(wikipedia.summary(result, sentences = 1))
+
+# Wikipedia library test
+
+print(divider)
+
+print("What would you like to know about?")
+
+query = raw_input()
+stripWords(query)
+
+print(divider)
+print("Here's what I found out about " + query + " ... ")
+
+# Use Unidecode to allow Windows to display unsupported characters
+# Limit to returning one sentence
+
+print unidecode(wikipedia.summary(query, sentences = 1))
     
 # Age
+
+print(divider)
 
 while True:
     try:
@@ -157,8 +186,18 @@ else:
             print(divider)
             print("You are older than me, " + myName)
             print(divider)
+            
+birthYear = str((current_year - myAge))
+            
+print("You were born in " + birthYear)
 
-# First conversation looks for specific occurences of words    
+print(divider)
+      
+print unidecode(wikipedia.summary(birthYear, sentences = 1))
+
+# First conversation looks for specific occurences of words   
+
+print(divider)
 
 while firstConversation:
     
@@ -250,4 +289,4 @@ while thirdConversation:
             print response
         else:
             print(random.choice(unrecognised))
-            thirdConversation = False
+            #thirdConversation = False
