@@ -11,10 +11,11 @@ thirdConversation = True
 result = ""
 
 # Define stop words list
-# Read extenal file and into list and strip newlines
+# Read extenal file into list and strip newlines
 
 with open ('stopwords.txt','r') as f:
     stopWords = [x.strip('\n') for x in f.readlines()]
+    f.close()
     #print(stopWords)
 
 # Define other lists, prompts and responses
@@ -283,7 +284,7 @@ while firstConversation:
 
 greetings = ['hola', 'hello', 'hi','hey!','hello','hey']
 questions = ['how are you?','how are you doing?','how are you','how are you feeling','how are you today']
-responses = ['Okay','I am fine','very good','very well','not so good']
+responses = ['Okay','I am fine','very good','very well, thank you','not so good']
 validations = ['yes','yeah','yea','no','nah','of course','of course not']
 confirmations = ['are you sure?','you sure?','you sure?','sure?','really?','honestly?','definintely?']
 
