@@ -2,6 +2,8 @@ import random
 import time
 import wikipedia
 from unidecode import unidecode
+from bs4 import BeautifulSoup
+import requests
 
 firstConversation = True
 secondConversation = True
@@ -37,31 +39,26 @@ stopWords = ["a", "a's", "able", "about", "above", "abroad", "according", "accor
              "formerly", "forth", "forty", "forward", "found", "four", "from", "front", "full", "further", "furthermore", "g", "get", "gets", "getting", "give", "given", "gives", "go", "goes", "going", "gone", "got", "gotten", "greetings", "h", "had", "hadn't", "hadnt", "half", "happens", "hardly", "has", "hasn't", "hasnt", "have", "haven't", "havent", "having", "he", "he'd", "he'll", "he's", "hello", "help", "hence", "her", "here", "here's", "hereafter", "hereby", "herein", "heres", "hereupon", "hers", "herse", "herself", "hi", "him", "himse", "himself", "his", "hither", "hopefully", "how", "how's", "howbeit", "however", "hows", "hundred", "i", "i'd", "i'll", "i'm", "i've", "ie", "if", "ignored", "immediate", "in", "inasmuch", "inc", "inc.", "indeed", "indicate", "indicated", "indicates", "inner", "inside", "insofar", "instead", "interest", "into", "inward", "is", "isn't", "isnt", "it", "it'd", "it'll", "it's", "itd", "itll", "its", "itse", "itself", "j", "just", "k", "keep", "keeps", "kept", "know", "known", "knows", "l", "last", "lately", "later", "latter", "latterly", "least", "less", "lest", "let", "let's", "lets", "like", "liked", "likely", "likewise", "little", "look", "looking", "looks", "low", "lower", "ltd", "m", "made", "mainly", "make", "makes", "many", "may", "maybe", "mayn't", "maynt", "me", "mean", "meantime", "meanwhile", "merely", "might", "mightn't", "mightnt", "mill", "mine", "minus", "miss", "more", "moreover", "most", "mostly", "move", "mr", "mrs", "much", "must", "mustn't", "mustnt", "my", "myse", "myself", "n", "name", "namely", "nd", "near", "nearly", "necessary", "need", "needn't", "neednt", "needs", "neither", "never", "neverf", "neverless", "nevertheless", "new", "next", "nine", "ninety", "no", "no-one", "nobody", "non", "none", "nonetheless", "noone", "nor", "normally", "not", "nothing", "notwithstanding", "novel", "now", "nowhere", "o", "obviously", "of", "off", "often", "oh", "ok", "okay", "old", "on", "once", "one", "one's", "ones", "only", "onto", "opposite", "or", "other", "others", "otherwise", "ought", "oughtn't", "oughtnt", "our", "ours", "ourselves", "out", "outside", "over", "overall", "own", "p", "part", "particular", "particularly", "past", "per", "perhaps", "placed", "please", "plus", "possible", "presumably", "probably", "provided", "provides", "put", "q", "que", "quite", "qv", "r", "rather", "rd", "re", "really", "reasonably", "recent", "recently", "regarding", "regardless", "regards", "relatively", "respectively", "right", "round", "s", "said", "same", "saw", "say", "saying", "says", "second", "secondly", "see", "seeing", "seem", "seemed", "seeming", "seems", "seen", "self", "selves", "sensible", "sent", "serious", "seriously", "seven", "several", "shall", "shan't", "shant", "she", "she'd", "she'll", "she's", "shes", "should", "shouldn't", "shouldnt", "show", "side", "since", "sincere", "six", "sixty", "so", "some", "somebody", "someday", "somehow", "someone", "something", "sometime", "sometimes", "somewhat", "somewhere", "soon", "sorry", "specified", "specify", "specifying", "still", "sub", "such", "sup", "sure", "system", "t", "t's", "take", "taken", "taking", "tell", "ten", "tends", "th", "than", "thank", "thanks", "thanx", "that", "that'll", "that's", "that've", "thatll", "thats", "thatve", "the", "their", "theirs", "them", "themselves", "then", "thence", "there", "there'd", "there'll", "there're", "there's", "there've", "thereafter", "thereby", "thered", "therefore", "therein", "therell", "therere", "theres", "thereupon", "thereve", "these", "they", "they'd", "they'll", "they're", "they've", "theyd", "theyll", "theyre", "theyve", "thick", "thin", "thing", "things", "think", "third", "thirty", "this", "thorough", "thoroughly", "those", "though", "three", "through", "throughout", "thru", "thus", "till", "to", "together", "too", "took", "top", "toward", "towards", "tried", "tries", "truly", "try", "trying", "twelve", "twenty", "twice", "two", "u", "un", "under", "underneath", "undoing", "unfortunately", "unless", "unlike", "unlikely", "until", "unto", "up", "upon", "upwards", "us", "use", "used", "useful", "uses", "using", "usually", "v", "value", "various", "versus", "very", "via", "viz", "vs", "w", "want", "wants", "was", "wasn't", "wasnt", "way", "we", "we'd", "we'll", "we're", "we've", "welcome", "well", "went", "were", "weren't", "werent", "weve", "what", "what'll", "what's", "what've", "whatever", "whatll", "whats", "whatve", "when", "when's", "whence", "whenever", "whens", "where", "where's", "whereafter", "whereas", "whereby", "wherein", "wheres", "whereupon", "wherever", "whether", "which", "whichever", "while", "whilst", "whither", "who", "who'd", "who'll", "who's", "whod", "whoever", "whole", "wholl", "whom", "whomever", "whos", "whose", "why", "why's", "whys", "will", "willing", "wish", "with", "within", "without", "won't", "wonder", "wont", "would", "wouldn't", "wouldnt", "x", "y", "yes", "yet", "you", "you'd", "you'll", "you're", "you've", "youd", \
              "youll", "your", "youre", "yours", "yourself", "yourselves", "youve", "z", "zero"]
 
-# Define pairs of trigger strings and responses
+# Define other lists, prompts and responses
 
-greetings = ['hola', 'hello', 'hi','hey!','hello','hey']
-questions = ['how are you?','how are you doing?','how are you','how are you feeling','how are you today']
-responses = ['Okay','I am fine','very good','very well','not so good']
-validations = ['yes','yeah','yea','no','nah','of course','of course not']
-confirmations = ['are you sure?','you sure?','you sure?','sure?','really?','honestly?','definintely?']
 names = ['Matthew','Simon','Bob']
-prompts = ['What can I do for you?','Do you have a question for me?','How about a nice game of chess?','Is there something you wanted to ask?']
+prompts = ['What can I do for you?','Do you have a question for me?','Is there something you wanted to ask?']
 unrecognised = ["I'm sorry, I did not understand","Come again?","Try asking something else",'Could you rephrase that?']
 
-link_pairs = (greetings, greetings), (questions, responses), (confirmations, validations)
+# Divider for readability
 
-# Divider
-
-divider = "****************************************************"
+divider = "*" * 100
+prefix = "*  "
 
 # Get the current hour and year
 
 current_hour = time.strptime(time.ctime(time.time())).tm_hour
 current_year = time.strptime(time.ctime(time.time())).tm_year
 
-# Set age for PC
+# Set age and year of birth for PC
 
 pcAge = random.randint(16,65)
+pcBirthYear = current_year - pcAge
 
 # Function to strip stop words from input
 
@@ -94,8 +91,11 @@ elif current_hour >= 18 :
 
 print(divider)
 
-print("Hello. What is your name?")
+print(prefix + "Hello. What is your name?")
 tempName = raw_input()
+while tempName == "":
+    print("Please try that again ...")
+    tempName = raw_input()
 stripWords(tempName)
 
 # Time-based greeting based on hour with random name returned
@@ -133,16 +133,25 @@ else:
 
 print(divider)
 
-print("Here's what I found out about " + query + " ... ")
+print("Here's what I found out about '" + query + "' ... ")
 
+# Wikipedia scrape
 # Use Unidecode to allow Windows to display unsupported characters
-# Limit to returning one sentence
+# Handle disambiguation
 
-print unidecode(wikipedia.summary(result, sentences = 1))
-
-# Wikipedia library test
+try: 
+    print unidecode(wikipedia.summary(query, sentences = 3))
+except:
+    topics = wikipedia.search(query)
+    print ("Did you mean? ...")
+    for i, topic in enumerate(topics):
+        print (i, unidecode(topic))
+    choice = int(raw_input("Choose one ..."))
+    assert choice in xrange (len(topics))
+    print unidecode(wikipedia.summary(topics[choice], sentences = 3))
 
 print(divider)
+time.sleep(3)
 
 print("What would you like to know about?")
 
@@ -150,16 +159,28 @@ query = raw_input()
 stripWords(query)
 
 print(divider)
-print("Here's what I found out about " + query + " ... ")
+print("Here's what I found out about '" + query + "' ... ")
+time.sleep(3)
 
 # Use Unidecode to allow Windows to display unsupported characters
 # Limit to returning one sentence
+# Handle disambiguation
 
-print unidecode(wikipedia.summary(query, sentences = 1))
+try: 
+    print unidecode(wikipedia.summary(query, sentences = 1))
+except:
+    topics = wikipedia.search(query)
+    print ("Did you mean? ...")
+    for i, topic in enumerate(topics):
+        print (i, unidecode(topic))
+    choice = int(raw_input("Choose one ..."))
+    assert choice in xrange (len(topics))
+    print unidecode(wikipedia.summary(topics[choice], sentences = 1))
     
 # Age
 
 print(divider)
+time.sleep(3)
 
 while True:
     try:
@@ -172,40 +193,82 @@ while True:
     else:
         #Valid input - exit loop
         break
-if myAge == pcAge: 
+if myAge == pcAge:
+    time.sleep(3)
     print(divider)
     print("We are the same age, " + myName)
     print(divider)
 else:
     if myAge > pcAge:
+        time.sleep(3)
         print(divider)
         print("I am younger than you, " + myName)
         print(divider)
     else:
         if myAge < pcAge:
+            time.sleep(3)
             print(divider)
-            print("You are older than me, " + myName)
+            print("I am older than you, " + myName)
             print(divider)
             
 birthYear = str((current_year - myAge))
-            
+
+time.sleep(3)
 print("You were born in " + birthYear)
 
 print(divider)
-      
-print unidecode(wikipedia.summary(birthYear, sentences = 1))
 
-# First conversation looks for specific occurences of words   
+time.sleep(3)
+print("Some interesting facts about " + str(birthYear) + " ...")
+print(divider)
+time.sleep(3)
+
+# URL Scrape for year-related info
+
+url = "http://www.onthisday.com/events/date/" + str(birthYear)
+r = requests.get(url)
+data = r.text
+soup = BeautifulSoup(data, "html.parser")
+# Filter scrape on class and return five items - text only
+for link in soup.find_all("li", class_="event-list__item", limit = 5):
+    print(link.get_text())
+
+# End of guided conversation
+
+# First conversation looks for specific occurences of words
 
 print(divider)
+time.sleep(3)
 
 while firstConversation:
     
-    followUp = raw_input(random.choice(prompts))
+    # Prompt user with a random prompt
+    
+    print (random.choice(prompts))
+    followUp = raw_input()
     
     if 'old' in followUp:
+        
         print("A gentleman doesn't ask")
         print(" ... but as it happens, I am " + str(pcAge) + " years old")
+        print(divider)
+        time.sleep(3)
+        print("Which means I was born in " + str(pcBirthYear))
+        print(divider)
+        time.sleep(3)
+        print("Some interesting facts about " + str(pcBirthYear) + " ...")
+        print(divider)
+        time.sleep(3)
+        
+        # URL Scrape for year-related info
+        url = "http://www.onthisday.com/events/date/" + str(pcBirthYear)
+        r = requests.get(url)
+        data = r.text
+        soup = BeautifulSoup(data, "html.parser")
+        
+        # Filter scrape on class and return five items - text only
+        for link in soup.find_all("li", class_="event-list__item", limit = 5):
+            print(link.get_text())
         print(divider)
         continue
         
@@ -227,10 +290,22 @@ while firstConversation:
                 firstConversation = False
                 
 # Second conversation is more random and uses lists as keywords and responses
-                
+
+# Define pairs of trigger strings and responses
+
+greetings = ['hola', 'hello', 'hi','hey!','hello','hey']
+questions = ['how are you?','how are you doing?','how are you','how are you feeling','how are you today']
+responses = ['Okay','I am fine','very good','very well','not so good']
+validations = ['yes','yeah','yea','no','nah','of course','of course not']
+confirmations = ['are you sure?','you sure?','you sure?','sure?','really?','honestly?','definintely?']
+
+link_pairs = (greetings, greetings), (questions, responses), (confirmations, validations)
+
+print(divider)
+print("*** We are now in secondConversation ***")
+time.sleep(3)
+
 while secondConversation:
-    
-    print("*** We are now in secondConversation ***")
     
     # Prompt user with a random prompt
     print(random.choice(prompts))
@@ -245,20 +320,24 @@ while secondConversation:
         break
         
     else:
-        if 'sure' in userInput:
-            response = "Sure about what?"
-            print response
+        if 'goodbye' in userInput:
+            print("Hang on ... one more thing ...")
+            break
         else:
             print(random.choice(unrecognised))
-            secondConversation = False
+            continue
             
-myQuestions = ['What are you doing?','What are you up to?']
+# Third conversation uses linked random questions, answers and follow-ups
+            
+myQuestions = ['What are you doing?','What are you up to?','How are you today?']
 pcAnswers = ['I am talking to you','I am typing this']
-myFollowUps = ['Thats nice','Oh dear']
+myFollowUps = ['Thats nice','Oh dear','Never mind','Too bad']
 pcFollowUps = ['Thank you','I know']
 linkedQA = (myQuestions,pcAnswers), (myFollowUps,pcFollowUps)
 
+print(divider)
 print("*** We are now in thirdConversation")
+time.sleep(3)
 
 while thirdConversation:
     
@@ -281,12 +360,11 @@ while thirdConversation:
             random_followUp = random.choice(answers)
             print(random_followUp)
         
-        break
-        
     else:
-        if 'sure' in userInput:
-            response = "Sure about what?"
-            print response
+        if 'goodbye' in userInput:
+            print("Thank you for talking to me, " + myName)
+            break
         else:
             print(random.choice(unrecognised))
+            continue
             #thirdConversation = False
