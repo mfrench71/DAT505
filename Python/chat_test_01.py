@@ -208,7 +208,7 @@ print("You were born in " + birthYear)
 print(divider)
 
 time.sleep(3)
-print("Some interesting facts about " + str(birthYear) + " ...")
+print("Some interesting (mostly American) facts about " + str(birthYear) + " ...")
 print(divider)
 time.sleep(3)
 
@@ -236,7 +236,7 @@ while firstConversation:
     print (random.choice(prompts))
     followUp = raw_input()
     
-    if 'old' or 'age'  or 'born' in followUp:
+    if 'old' in followUp:
         
         print("A gentleman doesn't ask")
         print(" ... but as it happens, I am " + str(pcAge) + " years old")
@@ -245,7 +245,7 @@ while firstConversation:
         print("Which means I was born in " + str(pcBirthYear))
         print(divider)
         time.sleep(3)
-        print("Some interesting facts about " + str(pcBirthYear) + " ...")
+        print("Some interesting (mostly American) facts about " + str(pcBirthYear) + " ...")
         print(divider)
         time.sleep(3)
         
@@ -262,13 +262,13 @@ while firstConversation:
         continue
         
     else:
-        if 'name' or 'called' in followUp:
+        if 'name' in followUp:
             print("I already told you ... it's " + pcName)
             print(divider)
             continue
             
         else:
-            if 'doing' or 'up to' in followUp:
+            if 'doing' in followUp:
                 print("Talking to you of course!")
                 print(divider)
                 continue
