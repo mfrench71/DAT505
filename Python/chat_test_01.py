@@ -11,12 +11,19 @@ thirdConversation = True
 result = ""
 
 # Define stop words list
-# Read extenal file into list and strip newlines
+# Read extenal file and into list and strip newlines
 
 with open ('stopwords.txt','r') as f:
     stopWords = [x.strip('\n') for x in f.readlines()]
     f.close()
     #print(stopWords)
+    
+# Define list of common first names
+    
+with open('names.txt', 'r') as f:
+    namesList = f.read().splitlines()
+    f.close()
+    # print(namesList)
 
 # Define other lists, prompts and responses
 
@@ -72,10 +79,14 @@ print(divider)
 
 print(prefix + "Hello. What is your name?")
 tempName = raw_input()
-while tempName == "":
-    print("Please try that again ...")
-    tempName = raw_input()
 stripWords(tempName)
+
+# Compare supplied name against list of common first names and prompt until a match is found
+
+while result.capitalize() not in namesList:
+    print("Is that really your name? ... please try that again ...")
+    tempName = raw_input()
+    stripWords(tempName)
 
 # Time-based greeting based on hour with random name returned
 # Capitalise first letter of name in case it is entered in lower case
@@ -92,23 +103,12 @@ print("My name is " + pcName)
 if pcName == result.capitalize():
     print("What a coincidence!")
 
-# Testing stripWords function
-
 print(divider)
 
 print("Tell me something interesting about yourself")
 
 query = raw_input()
 stripWords(query)
-
-print(divider)
-
-print("This is what I found interesting...")
-
-if result:
-    print(result)
-else:
-    print("Not much")
 
 print(divider)
 
@@ -236,7 +236,7 @@ while firstConversation:
     print (random.choice(prompts))
     followUp = raw_input()
     
-    if 'old' in followUp:
+    if 'old' or 'age'  or 'born' in followUp:
         
         print("A gentleman doesn't ask")
         print(" ... but as it happens, I am " + str(pcAge) + " years old")
@@ -262,21 +262,32 @@ while firstConversation:
         continue
         
     else:
-        if 'name' in followUp:
+        if 'name' or 'called' in followUp:
             print("I already told you ... it's " + pcName)
             print(divider)
             continue
             
         else:
-            if 'doing' in followUp:
+            if 'doing' or 'up to' in followUp:
                 print("Talking to you of course!")
                 print(divider)
                 continue
                 
             else:
-                #print(random.choice(unrecognised))
-                print("I didn't get that, so let's move on ... ")
-                firstConversation = False
+                if 'weather' in followUp:
+                    print("Well, " + myName + " ... today's weather looks like this ...")
+                    print(divider)
+                    urlWeather="http://www.bbc.co.uk/weather/2640194"
+                    r = requests.get(urlWeather)
+                    weatherData = r.text
+                    weatherSoup = BeautifulSoup(weatherData,"html.parser")
+                    for link in weatherSoup.find_all("p", class_="body", limit = 1):
+                        print(link.get_text())
+                
+                else:
+                    #print(random.choice(unrecognised))
+                    print("I didn't get that, so let's move on ... ")
+                    firstConversation = False
                 
 # Second conversation is more random and uses lists as keywords and responses
 
@@ -287,6 +298,7 @@ questions = ['how are you?','how are you doing?','how are you','how are you feel
 responses = ['Okay','I am fine','very good','very well, thank you','not so good']
 validations = ['yes','yeah','yea','no','nah','of course','of course not']
 confirmations = ['are you sure?','you sure?','you sure?','sure?','really?','honestly?','definintely?']
+signoffs = ['goodbye','quit','bye','finish','finished']
 
 link_pairs = (greetings, greetings), (questions, responses), (confirmations, validations)
 
@@ -309,7 +321,7 @@ while secondConversation:
         break
         
     else:
-        if 'goodbye' in userInput:
+        if userInput.lower() in signoffs:
             print("Hang on ... one more thing ...")
             break
         else:
@@ -350,7 +362,7 @@ while thirdConversation:
             print(random_followUp)
         
     else:
-        if 'goodbye' in userInput:
+        if 'goodbye' in myQuestion:
             print("Thank you for talking to me, " + myName)
             break
         else:
