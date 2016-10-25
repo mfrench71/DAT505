@@ -1,3 +1,5 @@
+# Import libraries
+
 import random
 import time
 import wikipedia
@@ -5,9 +7,10 @@ from unidecode import unidecode
 from bs4 import BeautifulSoup
 import requests
 
+# Set booleans to control conversation flow
+
 firstConversation = True
 secondConversation = True
-thirdConversation = True
 result = ""
 
 # Define stop words list
@@ -16,14 +19,12 @@ result = ""
 with open ('stopwords.txt','r') as f:
     stopWords = [x.strip('\n') for x in f.readlines()]
     f.close()
-    #print(stopWords)
     
 # Define list of common first names
     
 with open('names.txt', 'r') as f:
     namesList = f.read().splitlines()
     f.close()
-    # print(namesList)
 
 # Define other lists, prompts and responses
 
@@ -88,7 +89,7 @@ while result.capitalize() not in namesList:
     tempName = raw_input()
     stripWords(tempName)
 
-# Time-based greeting based on hour with random name returned
+# Time-based greeting based on hour with random PC name returned
 # Capitalise first letter of name in case it is entered in lower case
 
 print(divider)
@@ -114,41 +115,13 @@ print(divider)
 
 print("Here's what I found out about '" + query + "' ... ")
 
-# Wikipedia scrape
+# Wikipedia scrape 1
 # Use Unidecode to allow Windows to display unsupported characters
+# Limit number of sentences returned
 # Handle disambiguation
 
 try: 
     print unidecode(wikipedia.summary(query, sentences = 3))
-except:
-    topics = wikipedia.search(query)
-    print ("Did you mean? ...")
-    for i, topic in enumerate(topics):
-        print (i, unidecode(topic))
-    choice = int(raw_input("Choose one ..."))
-    if choice in xrange (len(topics)):
-        print unidecode(wikipedia.summary(topics[choice], sentences = 3))
-    else:
-        print("Oops")
-
-print(divider)
-time.sleep(3)
-
-print("What would you like to know about?")
-
-query = raw_input()
-stripWords(query)
-
-print(divider)
-print("Here's what I found out about '" + query + "' ... ")
-time.sleep(3)
-
-# Use Unidecode to allow Windows to display unsupported characters
-# Limit to returning one sentence
-# Handle disambiguation
-
-try: 
-    print unidecode(wikipedia.summary(query, sentences = 2))
 except:
     topics = wikipedia.search(query)
     print ("Did you mean? ...")
@@ -161,7 +134,43 @@ except:
     # Check option chosen is included in available options
     if choice in xrange (len(topics)):
         # If it is, print the Wikipedia summary for chosen option
-        print unidecode(wikipedia.summary(topics[choice], sentences = 2))
+        print unidecode(wikipedia.summary(topics[choice], sentences = 3))
+    # Otherwise, error
+    else:
+        print("Oops")
+
+print(divider)
+time.sleep(2)
+
+print("What would you like to know about?")
+
+query = raw_input()
+stripWords(query)
+
+print(divider)
+print("Here's what I found out about '" + query + "' ... ")
+time.sleep(2)
+
+# Wikipedia scrape 2
+# Use Unidecode to allow Windows to display unsupported characters
+# Limit number of sentences returned
+# Handle disambiguation
+
+try: 
+    print unidecode(wikipedia.summary(query, sentences = 3))
+except:
+    topics = wikipedia.search(query)
+    print ("Did you mean? ...")
+    # Loop through search results with count/values
+    for i, topic in enumerate(topics):
+        # Print numbered list of results
+        print (i, unidecode(topic))
+    # Prompt user to choose an item
+    choice = int(raw_input("Choose one ..."))
+    # Check option chosen is included in available options
+    if choice in xrange (len(topics)):
+        # If it is, print the Wikipedia summary for chosen option
+        print unidecode(wikipedia.summary(topics[choice], sentences = 3))
     # Otherwise, error
     else:
         print("Oops")
@@ -169,11 +178,11 @@ except:
 # Age
 
 print(divider)
-time.sleep(3)
+time.sleep(2)
 
 while True:
     try:
-        print("How old are you, " + myName)
+        print("How old are you, " + myName + "?")
         myAge = int(raw_input())
     except ValueError:
         print("Sorry, " + myName + "; I didn't understand that.")
@@ -183,34 +192,34 @@ while True:
         #Valid input - exit loop
         break
 if myAge == pcAge:
-    time.sleep(3)
+    time.sleep(2)
     print(divider)
     print("We are the same age, " + myName)
     print(divider)
 else:
     if myAge > pcAge:
-        time.sleep(3)
+        time.sleep(2)
         print(divider)
         print("I am younger than you, " + myName)
         print(divider)
     else:
         if myAge < pcAge:
-            time.sleep(3)
+            time.sleep(2)
             print(divider)
             print("I am older than you, " + myName)
             print(divider)
             
 birthYear = str((current_year - myAge))
 
-time.sleep(3)
+time.sleep(2)
 print("You were born in " + birthYear)
 
 print(divider)
 
-time.sleep(3)
+time.sleep(2)
 print("Some interesting (mostly American) facts about " + str(birthYear) + " ...")
 print(divider)
-time.sleep(3)
+time.sleep(2)
 
 # URL Scrape for year-related info
 
@@ -220,14 +229,14 @@ data = r.text
 soup = BeautifulSoup(data, "html.parser")
 # Filter scrape on class and return five items - text only
 for link in soup.find_all("li", class_="event-list__item", limit = 5):
-    print(link.get_text())
+    print(unidecode(link.get_text()))
 
 # End of guided conversation
 
 # First conversation looks for specific occurences of words
 
 print(divider)
-time.sleep(3)
+time.sleep(2)
 
 while firstConversation:
     
@@ -241,13 +250,13 @@ while firstConversation:
         print("A gentleman doesn't ask")
         print(" ... but as it happens, I am " + str(pcAge) + " years old")
         print(divider)
-        time.sleep(3)
+        time.sleep(2)
         print("Which means I was born in " + str(pcBirthYear))
         print(divider)
-        time.sleep(3)
+        time.sleep(2)
         print("Some interesting (mostly American) facts about " + str(pcBirthYear) + " ...")
         print(divider)
-        time.sleep(3)
+        time.sleep(2)
         
         # URL Scrape for year-related info
         url = "http://www.onthisday.com/events/date/" + str(pcBirthYear)
@@ -257,7 +266,7 @@ while firstConversation:
         
         # Filter scrape on class and return five items - text only
         for link in soup.find_all("li", class_="event-list__item", limit = 5):
-            print(link.get_text())
+            print(unidecode(link.get_text()))
         print(divider)
         continue
         
@@ -298,13 +307,14 @@ questions = ['how are you?','how are you doing?','how are you','how are you feel
 responses = ['Okay','I am fine','very good','very well, thank you','not so good']
 validations = ['yes','yeah','yea','no','nah','of course','of course not']
 confirmations = ['are you sure?','you sure?','you sure?','sure?','really?','honestly?','definintely?']
+
 signoffs = ['goodbye','quit','bye','finish','finished']
 
 link_pairs = (greetings, greetings), (questions, responses), (confirmations, validations)
 
 print(divider)
 print("*** We are now in secondConversation ***")
-time.sleep(3)
+time.sleep(2)
 
 while secondConversation:
     
@@ -316,56 +326,9 @@ while secondConversation:
             continue
             
         random_output = random.choice(outputs)
-            
         print(random_output)
-        break
         
     else:
         if userInput.lower() in signoffs:
-            print("Hang on ... one more thing ...")
-            break
-        else:
-            print(random.choice(unrecognised))
-            continue
-            
-# Third conversation uses linked random questions, answers and follow-ups
-            
-myQuestions = ['What are you doing?','What are you up to?','How are you today?']
-pcAnswers = ['I am talking to you','I am typing this']
-myFollowUps = ['Thats nice','Oh dear','Never mind','Too bad']
-pcFollowUps = ['Thank you','I know']
-linkedQA = (myQuestions,pcAnswers), (myFollowUps,pcFollowUps)
-
-print(divider)
-print("*** We are now in thirdConversation")
-time.sleep(3)
-
-while thirdConversation:
-    
-    # Prompt user with a random prompt
-    print(random.choice(prompts))
-    
-    myQuestion = raw_input()
-    for questions, answers in linkedQA:
-        if not myQuestion in questions:
-            continue
-            
-        random_answer = random.choice(answers)
-        print(random_answer)
-        
-        myFollowUp = raw_input()
-        for questions, answers in linkedQA:
-            if not myFollowUp in questions:
-                continue
-                
-            random_followUp = random.choice(answers)
-            print(random_followUp)
-        
-    else:
-        if 'goodbye' in myQuestion:
             print("Thank you for talking to me, " + myName)
-            break
-        else:
-            print(random.choice(unrecognised))
-            continue
-            #thirdConversation = False
+            secondConversation = False
