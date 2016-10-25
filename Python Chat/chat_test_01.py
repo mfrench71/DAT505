@@ -16,8 +16,8 @@ result = ""
 # Define stop words list
 # Read extenal file and into list and strip newlines
 
-with open ('stopwords.txt','r') as f:
-    stopWords = [x.strip('\n') for x in f.readlines()]
+with open('stopwords.txt', 'r') as f:
+    stopWords = f.read().splitlines()
     f.close()
     
 # Define list of common first names
@@ -88,6 +88,7 @@ while result.capitalize() not in namesList:
     print("Is that really your name? ... please try that again ...")
     tempName = raw_input()
     stripWords(tempName)
+    
 
 # Time-based greeting based on hour with random PC name returned
 # Capitalise first letter of name in case it is entered in lower case
@@ -108,12 +109,13 @@ print(divider)
 
 print("Tell me something interesting about yourself")
 
+result = ""
 query = raw_input()
 stripWords(query)
 
 print(divider)
 
-print("Here's what I found out about '" + query + "' ... ")
+print("Here's what I found out about '" + result + "' ... ")
 
 # Wikipedia scrape 1
 # Use Unidecode to allow Windows to display unsupported characters
@@ -121,9 +123,9 @@ print("Here's what I found out about '" + query + "' ... ")
 # Handle disambiguation
 
 try: 
-    print unidecode(wikipedia.summary(query, sentences = 3))
+    print unidecode(wikipedia.summary(result, sentences = 3))
 except:
-    topics = wikipedia.search(query)
+    topics = wikipedia.search(result)
     print ("Did you mean? ...")
     # Loop through search results with count/values
     for i, topic in enumerate(topics):
@@ -144,11 +146,12 @@ time.sleep(2)
 
 print("What would you like to know about?")
 
+result = ""
 query = raw_input()
 stripWords(query)
 
 print(divider)
-print("Here's what I found out about '" + query + "' ... ")
+print("Here's what I found out about '" + result + "' ... ")
 time.sleep(2)
 
 # Wikipedia scrape 2
@@ -157,9 +160,9 @@ time.sleep(2)
 # Handle disambiguation
 
 try: 
-    print unidecode(wikipedia.summary(query, sentences = 3))
+    print unidecode(wikipedia.summary(result, sentences = 3))
 except:
-    topics = wikipedia.search(query)
+    topics = wikipedia.search(result)
     print ("Did you mean? ...")
     # Loop through search results with count/values
     for i, topic in enumerate(topics):
