@@ -92,4 +92,3 @@ while True:
     print (divider)
     
     # Pause and display countdown to next update
-    countdown(60)
