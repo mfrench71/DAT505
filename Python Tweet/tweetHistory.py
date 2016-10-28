@@ -13,9 +13,6 @@ from BeautifulSoup import BeautifulSoup
 # Define a list of prefixes
 prefixList = ["I'm really liking ", "Currently browsing: ", "Loitering around: ", "Why not join me at "]
 
-# Choose prefix at random
-prefix = random.choice(prefixList)
-
 # Divider
 divider = "*" * 100
 
@@ -23,7 +20,10 @@ divider = "*" * 100
 
 while True:
     
-    # Generate random number
+    # Choose prefix at random
+    prefix = random.choice(prefixList)
+    
+    # Generate 'random' number to prevent duplicate tweet issue
     randomNumber = random.randint(1000,9999)
 
     # Connect to database file and get a "cursor"
