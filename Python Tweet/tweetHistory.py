@@ -22,6 +22,9 @@ divider = "*" * 100
 # Infinite loop
 
 while True:
+    
+    # Generate random number
+    randomNumber = random.randint(1000,9999)
 
     # Connect to database file and get a "cursor"
     # Windows OS/Firefox
@@ -49,8 +52,8 @@ while True:
     # Retrieve HTML Title from URL
     # Printing unicode characters cause an error (on Windows) so decode
     urlTitle = unidecode(soup.title.string)
-    # Truncate to limit to 140 characters (including prefix and ellipsis)
-    prefixTruncate = 140 - (len(prefix)+3)
+    # Truncate to limit to 140 characters (including prefix, random number and ellipsis)
+    prefixTruncate = 140 - (len(prefix)+10)
     #print prefixTruncate
     urlTitle = urlTitle[:prefixTruncate] + (urlTitle[prefixTruncate:] and '...')
     
@@ -73,7 +76,7 @@ while True:
     timestamp = datetime.datetime.utcnow()
 
     # Post status update and get the response from Twitter
-    response = api.PostUpdate(prefix + urlTitle)
+    response = api.PostUpdate("(" + str(randomNumber) + ") " + prefix + urlTitle)
 
     # Print out response text (should be the status update if everything worked)
     print("Status updated to: " + response.text)
