@@ -1,4 +1,4 @@
-# Script to Tweet last web page title and URL visited (Windows/Firefox)
+# Script to Tweet page title of most recently visited URL (Windows/Firefox)
 
 # Import the required libraries
 import sqlite3
@@ -15,6 +15,9 @@ prefixList = ["I'm really liking ", "Currently browsing: ", "Loitering around: "
 
 # Choose prefix at random
 prefix = random.choice(prefixList)
+
+# Divider
+divider = "*" * 100
 
 # Infinite loop
 
@@ -34,20 +37,27 @@ while True:
 
     # Print out second row in the results set (URL)
     for row in rows:
+        print (divider)
         print row[1]
         # Store URL in variable
         url = row[1]
 
-    soup = BeautifulSoup(urllib2.urlopen(url))
+    # Open URL
+    # Add header to get around 403 error on some sites
+    request = urllib2.Request(url, headers={'User-Agent' : "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/534.30 (KHTML, like Gecko) Ubuntu/11.04 Chromium/12.0.742.112 Chrome/12.0.742.112 Safari/534.30"}) 
+    soup = BeautifulSoup(urllib2.urlopen(request))
     # Retrieve HTML Title from URL
+    # Printing unicode characters cause an error (on Windows) so decode
     urlTitle = unidecode(soup.title.string)
     # Truncate to limit to 140 characters (including prefix and ellipsis)
     prefixTruncate = 140 - (len(prefix)+3)
     #print prefixTruncate
     urlTitle = urlTitle[:prefixTruncate] + (urlTitle[prefixTruncate:] and '...')
     
-    # Printing unicode characters cause an error (on Windows) so decode
-    print urlTitle
+    # Print page title to console
+    print (divider)
+    print (urlTitle)
+    print (divider)
 
     # Close the console to disconnect from the database
     console.close()
@@ -70,4 +80,4 @@ while True:
     
     # Pause
     # 3600 is 1 hour
-    time.sleep(20)
+    time.sleep(60)
