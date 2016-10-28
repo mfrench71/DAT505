@@ -10,6 +10,7 @@ from BeautifulSoup import BeautifulSoup
 while True:
 
     # Connect to database file and get a "cursor"
+    # Windows OS/Firefox
     console = sqlite3.connect("C:/Users/mfren/AppData/Roaming/Mozilla/Firefox/Profiles/bmgr8w5y.default/places.sqlite")
     cursor = console.cursor()
 
@@ -20,10 +21,9 @@ while True:
     # Get all the search results into a list (array)
     rows = cursor.fetchall()
 
-    # Print out each row in the results set
+    # Print out first row in the results set (URL)
     for row in rows:
         print row[1]
-
         # Store URL in variable
         url = row[1]
 
@@ -54,4 +54,5 @@ while True:
     print("Status updated to: " + response.text)
     
     # Pause
+    # 3600 is 1 hour
     time.sleep(20)
