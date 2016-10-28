@@ -1,3 +1,5 @@
+# Script to Tweet last URL visited (Windows/Firefox)
+
 # Import the required libraries
 import sqlite3
 import urllib2
@@ -6,6 +8,8 @@ import datetime
 import time
 from unidecode import unidecode
 from BeautifulSoup import BeautifulSoup
+
+# Infinite loop
 
 while True:
 
@@ -21,17 +25,18 @@ while True:
     # Get all the search results into a list (array)
     rows = cursor.fetchall()
 
-    # Print out first row in the results set (URL)
+    # Print out second row in the results set (URL)
     for row in rows:
         print row[1]
         # Store URL in variable
         url = row[1]
 
-    # Retrieve HTML Title from URL
-    # Truncate to limit to 140 characters (including 'I'm really liking ')
     soup = BeautifulSoup(urllib2.urlopen(url))
+    # Retrieve HTML Title from URL
     urlTitle = soup.title.string
+    # Truncate to limit to 140 characters (including 'I'm really liking ')
     urlTitle = urlTitle[:119] + (urlTitle[119:] and '...')
+    # Unicode characters cause an error (on Windows) so decode
     print unidecode(urlTitle)
 
     # Close the console to disconnect from the database
