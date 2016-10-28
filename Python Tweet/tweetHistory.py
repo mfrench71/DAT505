@@ -7,6 +7,7 @@ import twitter
 import datetime
 import time
 import random
+import sys
 from unidecode import unidecode
 from BeautifulSoup import BeautifulSoup
 
@@ -15,6 +16,14 @@ prefixList = ["I'm really liking ", "Currently browsing: ", "Loitering around: "
 
 # Divider
 divider = "*" * 100
+spacer = "* "
+
+# Function to pause loop and display a countdown
+def countdown(t): # in seconds
+    for i in range(t,0,-1):
+        print spacer + 'Next update in %d seconds\r' % i,
+        sys.stdout.flush()
+        time.sleep(1)
 
 # Infinite loop
 
@@ -41,7 +50,7 @@ while True:
     # Print out second row in the results set (URL)
     for row in rows:
         print (divider)
-        print row[1]
+        print (spacer + "URL: " + row[1])
         # Store URL in variable
         url = row[1]
 
@@ -59,7 +68,7 @@ while True:
     
     # Print page title to console
     print (divider)
-    print (urlTitle)
+    print (spacer + "Page Title: " + urlTitle)
     print (divider)
 
     # Close the console to disconnect from the database
@@ -79,8 +88,8 @@ while True:
     response = api.PostUpdate("(" + str(randomNumber) + ") " + prefix + urlTitle)
 
     # Print out response text (should be the status update if everything worked)
-    print("Status updated to: " + response.text)
+    print(spacer + "Status updated to: " + response.text)
+    print (divider)
     
-    # Pause
-    # 3600 is 1 hour
-    time.sleep(60)
+    # Pause and display countdown to next update
+    countdown(60)
